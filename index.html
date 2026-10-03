@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Staff Details Register</title>
+<style>
+  :root{
+    --bg:#f3f5f4; --card:#ffffff; --ink:#17211d; --muted:#5d6b65; --line:#d5ddd9;
+    --accent:#0f5c4d; --accent-ink:#ffffff; --warn:#a4380f; --lock:#7a1f1f; --ok:#1b6b3a;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#101614; --card:#18211d; --ink:#e8efec; --muted:#9fb0a9; --line:#2d3b35; --accent:#4fb59f; --accent-ink:#06211a; --warn:#ff9a70; --lock:#ff8a8a; --ok:#6fd49a;}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.5}
+  .wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+  h1{font-size:1.7rem;margin:8px 0 2px}
+  h2{font-size:1.2rem;margin:0 0 14px}
+  .sub{color:var(--muted);margin:0 0 20px;font-family:system-ui,sans-serif;font-size:.92rem}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px;margin-bottom:22px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  label{display:block;font-family:system-ui,sans-serif;font-size:.82rem;color:var(--muted);margin-bottom:4px}
+  input[type=text],input[type=date],input[type=tel],input[type=number]{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);font:inherit;font-size:.95rem}
+  input:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+  input:disabled{opacity:.65;cursor:not-allowed}
+  .seg{display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+  .seg button{flex:1;padding:9px 8px;border:0;background:var(--bg);color:var(--ink);font:inherit;font-size:.92rem;cursor:pointer;font-family:system-ui,sans-serif}
+  .seg button+button{border-left:1px solid var(--line)}
+  .seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);font-weight:600}
+  .seg button:disabled{cursor:not-allowed;opacity:.7}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+  .btn{padding:10px 18px;border-radius:4px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:inherit;font-family:system-ui,sans-serif;font-size:.92rem;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--accent)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .status{font-family:system-ui,sans-serif;font-size:.85rem;padding:6px 10px;border-radius:4px;border:1px solid var(--line);display:inline-block}
+  .status.lock{color:var(--lock);border-color:var(--lock)}
+  .status.ok{color:var(--ok);border-color:var(--ok)}
+  .err{color:var(--warn);font-family:system-ui,sans-serif;font-size:.8rem;min-height:1em;margin-top:3px}
+  .msg{font-family:system-ui,sans-serif;font-size:.9rem;margin-top:12px;min-height:1.2em}
+  .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .tools input{max-width:280px}
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px}
+  table{border-collapse:collapse;width:100%;font-family:system-ui,sans-serif;font-size:.82rem;min-width:1500px}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+  th{background:var(--bg);position:sticky;top:0}
+  .empty{padding:24px;text-align:center;color:var(--muted);font-family:system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Staff Details Register</h1>
+  <p class="sub">Each employee record can be saved once and edited 3 more times. After that it is locked. Data is stored in this browser only.</p>
+
+  <section class="card" aria-labelledby="formTitle">
+    <h2 id="formTitle">Employee form</h2>
+    <form id="staffForm" novalidate>
+      <div class="grid">
+        <div><label for="empId">Employee ID</label><input type="text" id="empId" required autocomplete="off"><div class="err" data-for="empId"></div></div>
+        <div><label for="name">Name of the employee</label><input type="text" id="name" required><div class="err" data-for="name"></div></div>
+
+        <div>
+          <label>Relationship</label>
+          <div class="seg" data-toggle="relation">
+            <button type="button" data-val="Father" aria-pressed="true">Father</button>
+            <button type="button" data-val="Husband" aria-pressed="false">Husband</button>
+          </div>
+        </div>
+        <div><label for="relName" id="relLabel">Father's name</label><input type="text" id="relName" required><div class="err" data-for="relName"></div></div>
+
+        <div><label for="dob">Date of birth</label><input type="text" id="dob" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" autocomplete="off" required><div class="err" data-for="dob"></div></div>
+        <div><label for="doj">Date of joining</label><input type="text" id="doj" inputmode="numeric" maxlength="10" placeholder="dd/mm/yyyy" autocomplete="off" required><div class="err" data-for="doj"></div></div>
+
+        <div>
+          <label>Marital status</label>
+          <div class="seg" data-toggle="marital">
+            <button type="button" data-val="Single" aria-pressed="true">Single</button>
+            <button type="button" data-val="Married" aria-pressed="false">Married</button>
+          </div>
+        </div>
+        <div>
+          <label>Gender</label>
+          <div class="seg" data-toggle="gender">
+            <button type="button" data-val="Male" aria-pressed="true">Male</button>
+            <button type="button" data-val="Female" aria-pressed="false">Female</button>
+          </div>
+        </div>
+
+        <div><label for="mobile">Mobile number</label><input type="tel" id="mobile" maxlength="10" inputmode="numeric" required><div class="err" data-for="mobile"></div></div>
+        <div><label for="aadhaar">Aadhaar card number</label><input type="text" id="aadhaar" maxlength="12" inputmode="numeric" required><div class="err" data-for="aadhaar"></div></div>
+        <div><label for="pan">PAN card number</label><input type="text" id="pan" maxlength="10" style="text-transform:uppercase" required><div class="err" data-for="pan"></div></div>
+        <div><label for="bankAcc">Bank account number</label><input type="text" id="bankAcc" inputmode="numeric" required><div class="err" data-for="bankAcc"></div></div>
+        <div><label for="bankName">Bank name</label><input type="text" id="bankName" required><div class="err" data-for="bankName"></div></div>
+        <div><label for="branch">Branch</label><input type="text" id="branch" required><div class="err" data-for="branch"></div></div>
+        <div><label for="ifsc">IFSC code</label><input type="text" id="ifsc" maxlength="11" style="text-transform:uppercase" required><div class="err" data-for="ifsc"></div></div>
+        <div><label for="uan">UAN number</label><input type="text" id="uan" inputmode="numeric" maxlength="12"><div class="err" data-for="uan"></div></div>
+        <div><label for="esic">ESIC number</label><input type="text" id="esic" inputmode="numeric" maxlength="17"><div class="err" data-for="esic"></div></div>
+        <div><label for="gross">Gross salary</label><input type="number" id="gross" min="0" step="0.01" required><div class="err" data-for="gross"></div></div>
+        <div><label for="location">Location</label><input type="text" id="location" required><div class="err" data-for="location"></div></div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn" id="saveBtn">Save details</button>
+        <button type="button" class="btn ghost" id="newBtn">New employee</button>
+        <span class="status" id="editStatus">New record</span>
+      </div>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <section class="card" aria-labelledby="consTitle">
+    <h2 id="consTitle">Consolidated list</h2>
+    <div class="tools">
+      <input type="text" id="search" placeholder="Search by ID, name or location" aria-label="Search records">
+      <button type="button" class="btn ghost" id="xlsxBtn">Download Excel</button>
+      <button type="button" class="btn ghost" id="backupBtn">Backup all records</button>
+      <button type="button" class="btn ghost" id="restoreBtn">Restore from backup</button>
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Emp ID</th><th>Name</th><th>Relation</th><th>Father / Husband name</th><th>DOB</th><th>DOJ</th>
+            <th>Marital</th><th>Gender</th><th>Mobile</th><th>Aadhaar</th><th>PAN</th><th>Account no.</th>
+            <th>Bank</th><th>Branch</th><th>IFSC</th><th>UAN</th><th>ESIC</th><th>Gross salary</th><th>Location</th>
+            <th>Edits used</th><th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty">No records saved yet.</div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+  var KEY = "staffRegister.v1";
+  var MAX_EDITS = 3;
+  var TEXT = ["empId","name","relName","dob","doj","mobile","aadhaar","pan","bankAcc","bankName","branch","ifsc","uan","esic","gross","location"];
+  var TOGGLES = {relation:"Father", marital:"Single", gender:"Male"};
+  var current = null; // loaded record id
+
+  function $(id){return document.getElementById(id)}
+  function load(){
+    try{return JSON.parse(localStorage.getItem(KEY)) || {}}catch(e){return {}}
+  }
+  function store(data){
+    try{localStorage.setItem(KEY, JSON.stringify(data)); return true}
+    catch(e){ $("msg").textContent = "Could not save. Browser storage is unavailable or full."; return false }
+  }
+
+  /* ---------- toggles ---------- */
+  function setToggle(name, val){
+    TOGGLES[name] = val;
+    var btns = document.querySelectorAll('[data-toggle="'+name+'"] button');
+    for(var i=0;i<btns.length;i++) btns[i].setAttribute("aria-pressed", btns[i].dataset.val===val ? "true":"false");
+    if(name==="relation") $("relLabel").textContent = val + "'s name";
+  }
+  document.querySelectorAll(".seg").forEach(function(seg){
+    seg.addEventListener("click", function(e){
+      var b = e.target.closest("button"); if(!b || b.disabled) return;
+      setToggle(seg.dataset.toggle, b.dataset.val);
+    });
+  });
+
+  /* ---------- dd/mm/yyyy dates (stored internally as yyyy-mm-dd) ---------- */
+  function parseDMY(t){
+    var m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(t);
+    if(!m) return "";
+    var d = +m[1], mo = +m[2], y = +m[3];
+    if(y < 1900 || y > 2100 || mo < 1 || mo > 12) return "";
+    var dt = new Date(y, mo-1, d);
+    if(dt.getFullYear() !== y || dt.getMonth() !== mo-1 || dt.getDate() !== d) return "";
+    return y + "-" + (mo<10?"0":"") + mo + "-" + (d<10?"0":"") + d;
+  }
+  function isoToDMY(iso){
+    var p = (iso||"").split("-");
+    return p.length===3 ? p[2]+"/"+p[1]+"/"+p[0] : (iso||"");
+  }
+  ["dob","doj"].forEach(function(id){
+    $(id).addEventListener("input", function(){
+      var d = this.value.replace(/\D/g,"").slice(0,8), out = d;
+      if(d.length > 4) out = d.slice(0,2)+"/"+d.slice(2,4)+"/"+d.slice(4);
+      else if(d.length > 2) out = d.slice(0,2)+"/"+d.slice(2);
+      this.value = out;
+    });
+  });
+
+  /* ---------- form state ---------- */
+  function setLocked(locked){
+    TEXT.forEach(function(id){ $(id).disabled = locked; });
+    document.querySelectorAll(".seg button").forEach(function(b){ b.disabled = locked; });
+    $("saveBtn").disabled = locked;
+  }
+  function clearErrors(){ document.querySelectorAll(".err").forEach(function(e){e.textContent=""}); }
+
+  function resetForm(){
+    current = null;
+    TEXT.forEach(function(id){ $(id).value = ""; });
+    setToggle("relation","Father"); setToggle("marital","Single"); setToggle("gender","Male");
+    setLocked(false); clearErrors();
+    $("empId").disabled = false;
+    $("saveBtn").textContent = "Save details";
+    setStatus("New record","");
+    $("msg").textContent = "";
+  }
+
+  function setStatus(text, cls){
+    var s = $("editStatus"); s.textContent = text; s.className = "status" + (cls ? " "+cls : "");
+  }
+
+  function fill(rec){
+    TEXT.forEach(function(id){ $(id).value = (id==="dob"||id==="doj") ? isoToDMY(rec[id]) : (rec[id] || ""); });
+    setToggle("relation", rec.relation); setToggle("marital", rec.marital); setToggle("gender", rec.gender);
+    current = rec.empId;
+    clearErrors();
+    var left = MAX_EDITS - rec.edits;
+    if(left <= 0){
+      setLocked(true);
+      setStatus("Locked: all 3 edits used","lock");
+    }else{
+      setLocked(false);
+      $("empId").disabled = true;
+      $("saveBtn").textContent = "Save edit";
+      setStatus("Edits used " + rec.edits + " of " + MAX_EDITS + " (" + left + " left)","ok");
+    }
+  }
+
+  /* ---------- validation ---------- */
+  function validate(v){
+    var e = {};
+    var req = ["empId","name","relName","dob","doj","mobile","aadhaar","pan","bankAcc","bankName","branch","ifsc","gross","location"];
+    req.forEach(function(k){ if(!String(v[k]).trim()) e[k] = "Required"; });
+    if(!e.mobile && !/^[6-9]\d{9}$/.test(v.mobile)) e.mobile = "Enter a 10-digit mobile number";
+    if(!e.aadhaar && !/^\d{12}$/.test(v.aadhaar)) e.aadhaar = "Aadhaar must be 12 digits";
+    if(!e.pan && !/^[A-Z]{5}\d{4}[A-Z]$/.test(v.pan)) e.pan = "Format: ABCDE1234F";
+    if(!e.bankAcc && !/^\d{6,18}$/.test(v.bankAcc)) e.bankAcc = "6 to 18 digits";
+    if(!e.ifsc && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.ifsc)) e.ifsc = "Format: ABCD0123456";
+    if(v.uan && !/^\d{12}$/.test(v.uan)) e.uan = "UAN must be 12 digits";
+    if(v.esic && !/^\d{10,17}$/.test(v.esic)) e.esic = "ESIC must be 10 to 17 digits";
+    if(!e.gross && Number(v.gross) <= 0) e.gross = "Enter an amount above 0";
+    if(!e.dob && !e.doj && v.doj < v.dob) e.doj = "Joining date is before birth date";
+    return e;
+  }
+
+  /* ---------- save ---------- */
+  $("staffForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    clearErrors();
+    var data = load();
+    var v = {};
+    TEXT.forEach(function(id){ v[id] = $(id).value.trim(); });
+    v.pan = v.pan.toUpperCase(); v.ifsc = v.ifsc.toUpperCase();
+    var dateErr = {};
+    ["dob","doj"].forEach(function(k){
+      if(!v[k]) return;
+      var iso = parseDMY(v[k]);
+      if(iso) v[k] = iso; else { v[k] = ""; dateErr[k] = "Enter a valid date as dd/mm/yyyy"; }
+    });
+    v.relation = TOGGLES.relation; v.marital = TOGGLES.marital; v.gender = TOGGLES.gender;
+
+    var errs = validate(v);
+    Object.keys(dateErr).forEach(function(k){ errs[k] = dateErr[k]; });
+    var keys = Object.keys(errs);
+    if(keys.length){
+      keys.forEach(function(k){ var el = document.querySelector('.err[data-for="'+k+'"]'); if(el) el.textContent = errs[k]; });
+      $("msg").textContent = "Fix the highlighted fields and save again.";
+      $(keys[0]).focus();
+      return;
+    }
+
+    var existing = data[v.empId];
+    if(!current && existing){
+      $("msg").textContent = "Employee ID " + v.empId + " already exists. Use Edit in the list below.";
+      return;
+    }
+    var now = new Date().toISOString();
+    if(current){
+      var rec = data[current];
+      if(rec.edits >= MAX_EDITS){ fill(rec); $("msg").textContent = "This record is locked."; return; }
+      v.empId = current;
+      v.edits = rec.edits + 1;
+      v.created = rec.created;
+    }else{
+      v.edits = 0;
+      v.created = now;
+    }
+    v.updated = now;
+    data[v.empId] = v;
+    if(!store(data)) return;
+    fill(v);
+    $("msg").textContent = (v.edits === 0 ? "Saved." : "Edit saved.") + (v.edits >= MAX_EDITS ? " Record is now locked." : "");
+    render();
+  });
+
+  $("newBtn").addEventListener("click", resetForm);
+
+  /* ---------- consolidated table ---------- */
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]}); }
+  function fmtDate(d){ return d ? isoToDMY(d) : ""; }
+
+  function render(){
+    var data = load();
+    var q = $("search").value.trim().toLowerCase();
+    var list = Object.keys(data).map(function(k){return data[k]}).filter(function(r){
+      return !q || [r.empId,r.name,r.location].join(" ").toLowerCase().indexOf(q) > -1;
+    }).sort(function(a,b){ return a.empId.localeCompare(b.empId, undefined, {numeric:true}); });
+
+    $("empty").style.display = list.length ? "none" : "block";
+    $("empty").textContent = Object.keys(data).length ? "No records match your search." : "No records saved yet.";
+    $("rows").innerHTML = list.map(function(r){
+      var locked = r.edits >= MAX_EDITS;
+      return "<tr>"+
+        "<td>"+esc(r.empId)+"</td><td>"+esc(r.name)+"</td><td>"+esc(r.relation)+"</td><td>"+esc(r.relName)+"</td>"+
+        "<td>"+fmtDate(r.dob)+"</td><td>"+fmtDate(r.doj)+"</td><td>"+esc(r.marital)+"</td><td>"+esc(r.gender)+"</td>"+
+        "<td>"+esc(r.mobile)+"</td><td>"+esc(r.aadhaar)+"</td><td>"+esc(r.pan)+"</td><td>"+esc(r.bankAcc)+"</td>"+
+        "<td>"+esc(r.bankName)+"</td><td>"+esc(r.branch)+"</td><td>"+esc(r.ifsc)+"</td><td>"+esc(r.uan)+"</td><td>"+esc(r.esic)+"</td>"+
+        "<td>"+Number(r.gross).toLocaleString("en-IN")+"</td><td>"+esc(r.location)+"</td>"+
+        "<td>"+r.edits+" / "+MAX_EDITS+"</td>"+
+        "<td>"+(locked ? "Locked" : "Editable")+"</td>"+
+        "<td><button type=\"button\" class=\"btn ghost\" data-open=\""+esc(r.empId)+"\">"+(locked?"View":"Edit")+"</button></td></tr>";
+    }).join("");
+  }
+
+  $("rows").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-open]"); if(!b) return;
+    var rec = load()[b.dataset.open]; if(!rec) return;
+    fill(rec);
+    $("msg").textContent = "";
+    window.scrollTo({top:0, behavior:"smooth"});
+  });
+  $("search").addEventListener("input", render);
+
+  /* ---------- file saving (published artifact uses the downloads capability; plain hosting uses a normal download) ---------- */
+  function saveFile(filename, text, mime){
+    function fallback(){
+      var blob = new Blob([text], {type:mime});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      return Promise.resolve(true);
+    }
+    if(window.claude && typeof window.claude.use === "function"){
+      return window.claude.use("downloads").then(function(dl){
+        if(!dl){ $("msg").textContent = "Downloads are not available in this view."; return false; }
+        return dl.save({filename:filename, data:text}).then(function(){ return true; }, function(err){
+          if(!err || err.code !== "declined") $("msg").textContent = "Could not save the file.";
+          return false;
+        });
+      });
+    }
+    return fallback();
+  }
+
+  /* ---------- Excel export ---------- */
+  $("xlsxBtn").addEventListener("click", function(){
+    var data = load(), ids = Object.keys(data);
+    if(!ids.length){ $("msg").textContent = "Nothing to download yet."; return; }
+    if(typeof XLSX === "undefined"){ $("msg").textContent = "Excel library could not load. Check your internet connection and reload."; return; }
+    var cols = [["empId","Employee ID"],["name","Name"],["relation","Relation"],["relName","Father/Husband name"],["dob","Date of birth"],["doj","Date of joining"],["marital","Marital status"],["gender","Gender"],["mobile","Mobile"],["aadhaar","Aadhaar"],["pan","PAN"],["bankAcc","Bank account"],["bankName","Bank name"],["branch","Branch"],["ifsc","IFSC"],["uan","UAN"],["esic","ESIC"],["gross","Gross salary"],["location","Location"],["edits","Edits used"],["status","Status"]];
+    var rows = [cols.map(function(c){return c[1]})];
+    ids.sort(function(a,b){return a.localeCompare(b,undefined,{numeric:true})}).forEach(function(id){
+      var r = data[id];
+      rows.push(cols.map(function(c){
+        var k = c[0];
+        if(k==="status") return r.ed
